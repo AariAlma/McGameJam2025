@@ -14,100 +14,59 @@ public class PlayerMovement : MonoBehaviour
     private float move;
     public float speed;
     public float jump;
-    private float jumpDelay;
+    public float punchCooldown;
+
 
 
     private Rigidbody2D rb;
-
-    public bool airborne;
-    public bool isFalling;
+    public bool isPunching;
     public bool isJumping;
+    public bool isFalling;
     private bool flipped = false;
-
-    public float KBForce;
-    public float KBCounter;
-    public float KBTotalTime;
-
-    public bool KnockFromRight;
-
     
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        punchCooldown = 0.7f;
     }
 
     void Update()
     {
-        // Animation
-        animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
-        if (rb.velocity.x < 0 && !flipped) FlipCharacter();
-        if (rb.velocity.x > 0 && flipped) FlipCharacter();
-        if (rb.velocity.y > 0 && !airborne)
+        // Falling Tag
+        if (rb.velocity.y < 0) 
         {
-            animator.SetBool("isJumping", isJumping);
+            isFalling = true;
         }
-
-        if (rb.velocity.y < 0 && airborne) isFalling = true;
-        animator.SetBool("isFalling", isFalling);
-           
-        // KnockBack
-        /*
-        if(KBCounter <= 0)
+        else 
         {
-            rb.velocity = new Vector2(move * speed, Mathf.Abs(rb.velocity.y));
-        } 
-        else
-        {
-            if(KnockFromRight ==true)
-            {
-                rb.velocity = new Vector2(-KBForce, KBForce);
-            }
-            if(KnockFromRight == false)
-            {
-                rb.velocity = new Vector2(KBForce, KBForce);
-            }
-
-            KBCounter-= Time.deltaTime;
+            isFalling = false;
         }
-        */
-
-
-        move = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(move * speed, rb.velocity.y);
-        if (Input.GetButtonDown("Jump") && !airborne) JumpAction();
-    }
-
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground") )
+        if (rb.velocity.y > 0)
         {
-            airborne = false;
+            isJumping = true;
+
         }
         else
-        {
-            airborne = true;
-        }
-    }
-
-    /*
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
         {
             isJumping = false;
         }
-    }
-       
+        animator.SetBool("isFalling", isFalling);
+        animator.SetBool("isJumping", isJumping);
 
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
+        // Animation
+        animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
+        if (Input.GetButtonDown("Jump") && rb.velocity.y == 0)
         {
-            isJumping = true;
+            rb.velocity = new Vector2(rb.velocity.x, jump);
         }
+        if (Input.GetKeyDown(KeyCode.J)) StartCoroutine(Punch());
+        if (rb.velocity.x < 0 && !flipped) FlipCharacter();
+        if (rb.velocity.x > 0 && flipped) FlipCharacter();
+           
+        move = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(move * speed, rb.velocity.y);
     }
-    */
-
+   
     private void FlipCharacter()
     {
         Vector3 factor = gameObject.transform.localScale;
@@ -116,12 +75,15 @@ public class PlayerMovement : MonoBehaviour
         flipped = !flipped;
     }
 
-    private IEnumerator JumpAction()
+    private IEnumerator Punch()
     {
-        isJumping = true;
-        yield return new WaitForSeconds(jumpDelay);
-        rb.velocity = new Vector2(rb.velocity.x, jump);
-        isJumping = false;
+        isPunching = true;
+        if (isJumping || isFalling) animator.SetBool("airPunch", true);
+        else animator.SetBool("groundPunch", true);
+        yield return new WaitForSeconds(punchCooldown);
+        animator.SetBool("airPunch", false);
+        animator.SetBool("groundPunch", false);
+        isPunching =  false;
     }
 
 
