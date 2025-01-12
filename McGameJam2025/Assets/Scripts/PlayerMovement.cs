@@ -5,14 +5,20 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // Animator done by Aari needed for animations
+    // Try to seperate rigid body physics and player movement next
+    // time please yp
+    public Animator animator;
+
+
     private float move;
     public float speed;
     public float jump;
 
-    public bool isJumping;
 
     private Rigidbody2D rb;
 
+    public bool isJumping;
 
     public float KBForce;
     public float KBCounter;
@@ -28,11 +34,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        
-
+        animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
+           
         if(KBCounter <= 0)
         {
-            rb.velocity = new Vector2(move * speed, rb.velocity.y);
+            rb.velocity = new Vector2(move * speed, Mathf.Abs(rb.velocity.y));
         } 
         else
         {
@@ -59,23 +65,21 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+         if (collision.gameObject.CompareTag("Ground"))
+         {
+             isJumping = false;
+         }
+     }
 
-
-    // private void OnCollisionEnter2D(Collision2D collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Ground"))
-    //     {
-    //         isJumping = false;
-    //     }
-    // }
-
-    // private void OnCollisionExit2D(Collision2D collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Ground"))
-    //     {
-    //         isJumping = true;
-    //     }
-    // }
+     private void OnCollisionExit2D(Collision2D collision)
+     {
+         if (collision.gameObject.CompareTag("Ground"))
+         {
+             isJumping = true;
+         }
+     }
 
 
 }
