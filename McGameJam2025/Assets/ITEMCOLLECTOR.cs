@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ItemCollector : MonoBehaviour
 {
@@ -58,5 +59,6 @@ public class ItemCollector : MonoBehaviour
     {
         Debug.Log("You won!");
         // Add your win condition logic here
+        SceneManager.LoadScene("END");
     }
 }
