@@ -35,10 +35,12 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Animation
         animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
         if (rb.velocity.x < 0 && !flipped) FlipCharacter();
         if (rb.velocity.x > 0 && flipped) FlipCharacter();
            
+        // KnockBack
         if(KBCounter <= 0)
         {
             rb.velocity = new Vector2(move * speed, Mathf.Abs(rb.velocity.y));
