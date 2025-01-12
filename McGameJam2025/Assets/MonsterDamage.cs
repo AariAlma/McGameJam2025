@@ -11,15 +11,6 @@ public class MonsterDamage : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            playerMovement.KBCounter = playerMovement.KBTotalTime;
-            if(collision.transform.position.x <= transform.position.x)
-            {
-                playerMovement.KnockFromRight = true;
-            }
-            if (collision.transform.position.x >= transform.position.x)
-            {
-                playerMovement.KnockFromRight = false;
-            }
             playerHealth.TakeDamage(damage);
         }
     }
