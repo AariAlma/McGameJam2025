@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
 
     public bool isJumping;
+    private bool flipped = false;
 
     public float KBForce;
     public float KBCounter;
@@ -35,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
+        if (rb.velocity.x < 0 && !flipped) FlipCharacter();
+        if (rb.velocity.x > 0 && flipped) FlipCharacter();
            
         if(KBCounter <= 0)
         {
@@ -79,6 +82,14 @@ public class PlayerMovement : MonoBehaviour
          {
              isJumping = true;
          }
+     }
+
+     private void FlipCharacter()
+     {
+        Vector3 factor = gameObject.transform.localScale;
+        factor.x *= -1;
+        gameObject.transform.localScale = factor;
+        flipped = !flipped;
      }
 
 
