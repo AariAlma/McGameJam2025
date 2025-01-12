@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
 
     public bool isJumping;
+    public bool isFalling;
     private bool flipped = false;
 
     public float KBForce;
@@ -39,8 +40,12 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
         if (rb.velocity.x < 0 && !flipped) FlipCharacter();
         if (rb.velocity.x > 0 && flipped) FlipCharacter();
+        animator.SetBool("isJumping", isJumping);
+        if (rb.velocity.y < -0.1f && isJumping) isFalling = true;
+        animator.SetBool("isFalling", isFalling);
            
         // KnockBack
+        /*
         if(KBCounter <= 0)
         {
             rb.velocity = new Vector2(move * speed, Mathf.Abs(rb.velocity.y));
@@ -58,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
 
             KBCounter-= Time.deltaTime;
         }
+        */
 
 
         move = Input.GetAxis("Horizontal");
@@ -70,29 +76,44 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isJumping = false;
+        }
+        else
+        {
+            isJumping = true;
+        }
+    }
+
+    /*
     private void OnCollisionEnter2D(Collision2D collision)
     {
-         if (collision.gameObject.CompareTag("Ground"))
-         {
-             isJumping = false;
-         }
-     }
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isJumping = false;
+        }
+    }
+       
 
-     private void OnCollisionExit2D(Collision2D collision)
-     {
-         if (collision.gameObject.CompareTag("Ground"))
-         {
-             isJumping = true;
-         }
-     }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isJumping = true;
+        }
+    }
+    */
 
-     private void FlipCharacter()
-     {
+    private void FlipCharacter()
+    {
         Vector3 factor = gameObject.transform.localScale;
         factor.x *= -1;
         gameObject.transform.localScale = factor;
         flipped = !flipped;
-     }
+    }
 
 
 }
