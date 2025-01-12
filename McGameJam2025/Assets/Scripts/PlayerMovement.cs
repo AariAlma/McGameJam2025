@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,14 @@ public class PlayerMovement : MonoBehaviour
     public bool isJumping;
 
     private Rigidbody2D rb;
+
+
+    public float KBForce;
+    public float KBCounter;
+    public float KBTotalTime;
+
+    public bool KnockFromRight;
+
     
     void Start()
     {
@@ -19,6 +28,27 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        
+
+        if(KBCounter <= 0)
+        {
+            rb.velocity = new Vector2(move * speed, rb.velocity.y);
+        } 
+        else
+        {
+            if(KnockFromRight ==true)
+            {
+                rb.velocity = new Vector2(-KBForce, KBForce);
+            }
+            if(KnockFromRight == false)
+            {
+                rb.velocity = new Vector2(KBForce, KBForce);
+            }
+
+            KBCounter-= Time.deltaTime;
+        }
+
+
         move = Input.GetAxis("Horizontal");
 
         rb.velocity = new Vector2(move * speed, rb.velocity.y);
@@ -28,6 +58,8 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, jump);
         }
     }
+
+
 
     // private void OnCollisionEnter2D(Collision2D collision)
     // {
