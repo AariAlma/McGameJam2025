@@ -7,6 +7,7 @@ TagManager:
   - Ground
   - Weak Point
   - OneWayPlatform
+  - WeakToPunch
   layers:
   - Default
   - TransparentFX
