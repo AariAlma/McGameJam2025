@@ -10,19 +10,23 @@ public class PlayerMovement : MonoBehaviour
     private float move;
     public float speed;
     public float jump;
+    public float punchCooldown = 0.7f;
 
     private Rigidbody2D rb;
 
     public bool isFalling;
     public bool isJumping;
+    public bool isPunching;
     private bool flipped = false;
 
-    // Knockback variables stay exactly the same
+    // Knockback variables
     public float KBForce = 3f;
     public float KBCounter;
     public float KBTotalTime = 0.4f;
     public bool KnockFromRight;
     private bool hasInitialized = false;
+
+    public GameObject punchHitbox;
 
     void Start()
     {
@@ -44,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         // Get input
         move = Input.GetAxis("Horizontal");
 
-        // Falling/Jumping state checks from second script
+        // Falling/Jumping state checks
         if (rb.velocity.y < 0)
         {
             isFalling = true;
@@ -59,6 +63,12 @@ public class PlayerMovement : MonoBehaviour
         {
             isJumping = false;
             isFalling = false;
+        }
+
+        // Handle punch input
+        if (Input.GetKeyDown(KeyCode.J) && !isPunching)
+        {
+            StartCoroutine(Punch());
         }
 
         // Knockback takes priority
@@ -79,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
             // Normal movement when not in knockback
             rb.velocity = new Vector2(move * speed, rb.velocity.y);
 
-            // Simplified jump from second script
+            // Jump handling
             if (Input.GetButtonDown("Jump") && !isFalling && !isJumping)
             {
                 rb.velocity = new Vector2(rb.velocity.x, jump);
@@ -96,7 +106,6 @@ public class PlayerMovement : MonoBehaviour
         if (rb.velocity.x > 0 && flipped) FlipCharacter();
     }
 
-    // Keep all your collision methods exactly as they were
     void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log($"Collision detected with tag: '{collision.gameObject.tag}'");
@@ -135,7 +144,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("OneWayPlatform"))
         {
-            // Update jumping/falling states
             if (rb.velocity.y < 0)
             {
                 isFalling = true;
@@ -149,5 +157,36 @@ public class PlayerMovement : MonoBehaviour
         factor.x *= -1;
         gameObject.transform.localScale = factor;
         flipped = !flipped;
+    }
+
+    private IEnumerator Punch()
+    {
+        isPunching = true;
+        if (isJumping || isFalling)
+            animator.SetBool("airPunch", true);
+        else
+            animator.SetBool("groundPunch", true);
+
+        // Enable punch hitbox
+        punchHitbox.SetActive(true);
+
+        yield return new WaitForSeconds(punchCooldown);
+
+        // Disable punch hitbox
+        punchHitbox.SetActive(false);
+        animator.SetBool("airPunch", false);
+        animator.SetBool("groundPunch", false);
+        isPunching = false;
+    }
+
+    void OnDrawGizmos()
+    {
+        // This will show your collider bounds in the Scene view
+        BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+        if (boxCollider != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireCube(transform.position + (Vector3)boxCollider.offset, boxCollider.size);
+        }
     }
 }

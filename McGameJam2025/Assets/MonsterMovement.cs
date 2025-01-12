@@ -11,20 +11,33 @@ public class MonsterMovement : MonoBehaviour
     public Transform playerTransform;
     public bool isChasing;
     public float chaseDistance;
-    // Update is called once per frame
+    private float scaleValue;
+
+    void Start()
+    {
+        // Check tag and set appropriate scale
+        if (gameObject.CompareTag("Weak Point"))
+        {
+            scaleValue = 5f;
+        }
+        else if (gameObject.CompareTag("Enemy"))
+        {
+            scaleValue = 3f;
+        }
+    }
     void Update()
     {
         if(isChasing)
         {
             if(transform.position.x > playerTransform.position.x)
             {
-                transform.localScale = new Vector3(5,5,1);
+                transform.localScale = new Vector3(scaleValue, scaleValue, 1);
                 transform.position += Vector3.left * moveSpeed * Time.deltaTime;
             }
 
             if (transform.position.x < playerTransform.position.x)
             {
-                transform.localScale = new Vector3(-5, 5, 1);
+                transform.localScale = new Vector3(-scaleValue, scaleValue, 1);
                 transform.position += Vector3.right * moveSpeed * Time.deltaTime;
             }
 
@@ -44,7 +57,7 @@ public class MonsterMovement : MonoBehaviour
                 transform.position = Vector2.MoveTowards(transform.position, patrolPoints[0].position, moveSpeed * Time.deltaTime);
                 if (Vector2.Distance(transform.position, patrolPoints[0].position) < 2f)
                 {
-                    transform.localScale = new Vector3(-5, 5, 1);
+                    transform.localScale = new Vector3(-scaleValue, scaleValue, 1);
                     patrolDestination = 1;
                 }
             }
@@ -54,7 +67,7 @@ public class MonsterMovement : MonoBehaviour
                 transform.position = Vector2.MoveTowards(transform.position, patrolPoints[1].position, moveSpeed * Time.deltaTime);
                 if (Vector2.Distance(transform.position, patrolPoints[1].position) < 2f)
                 {
-                    transform.localScale = new Vector3(5, 5, 1);
+                    transform.localScale = new Vector3(scaleValue, scaleValue, 1);
                     patrolDestination = 0;
                 }
             }

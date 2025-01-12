@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MechanicShop.unity
     guid: 60f09630d14fa441d97bd77f3e674e2c
+  - enabled: 1
+    path: Assets/aariyan-scenes/ACTUAL GAME/Start Menu.unity
+    guid: 8506aba9d920bb04a9b51b282b7f20ae
+  - enabled: 1
+    path: Assets/aariyan-scenes/ACTUAL GAME/GameScene.unity
+    guid: fa757cd9473f2144193186a2975c187d
+  - enabled: 1
+    path: Assets/aariyan-scenes/ACTUAL GAME/END.unity
+    guid: 335e2ec28bf44654898b85e266f3a477
   m_configObjects: {}
