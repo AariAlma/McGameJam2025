@@ -8,6 +8,8 @@ TagManager:
   - Weak Point
   - OneWayPlatform
   - WeakToPunch
+  - StartPoint
+  - Collectible
   layers:
   - Default
   - TransparentFX

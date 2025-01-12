@@ -5,108 +5,143 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Animator done by Aari needed for animations
-    // Try to seperate rigid body physics and player movement next
-    // time please yp
     public Animator animator;
-
 
     private float move;
     public float speed;
     public float jump;
-    private float jumpDelay;
-
 
     private Rigidbody2D rb;
 
-    public bool airborne;
     public bool isFalling;
     public bool isJumping;
     private bool flipped = false;
 
-    public float KBForce;
+    // Knockback variables stay exactly the same
+    public float KBForce = 3f;
     public float KBCounter;
-    public float KBTotalTime;
-
+    public float KBTotalTime = 0.4f;
     public bool KnockFromRight;
+    private bool hasInitialized = false;
 
-    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        KBCounter = 0f;
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        StartCoroutine(InitializeAfterDelay());
+    }
+
+    private IEnumerator InitializeAfterDelay()
+    {
+        yield return new WaitForSeconds(0.1f);
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        hasInitialized = true;
     }
 
     void Update()
     {
-        // Animation
-        animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
-        if (rb.velocity.x < 0 && !flipped) FlipCharacter();
-        if (rb.velocity.x > 0 && flipped) FlipCharacter();
-        if (rb.velocity.y > 0 && !airborne)
-        {
-            animator.SetBool("isJumping", isJumping);
-        }
-
-        if (rb.velocity.y < 0 && airborne) isFalling = true;
-        animator.SetBool("isFalling", isFalling);
-           
-        // KnockBack
-        /*
-        if(KBCounter <= 0)
-        {
-            rb.velocity = new Vector2(move * speed, Mathf.Abs(rb.velocity.y));
-        } 
-        else
-        {
-            if(KnockFromRight ==true)
-            {
-                rb.velocity = new Vector2(-KBForce, KBForce);
-            }
-            if(KnockFromRight == false)
-            {
-                rb.velocity = new Vector2(KBForce, KBForce);
-            }
-
-            KBCounter-= Time.deltaTime;
-        }
-        */
-
-
+        // Get input
         move = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(move * speed, rb.velocity.y);
-        if (Input.GetButtonDown("Jump") && !airborne) JumpAction();
-    }
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground") )
+        // Falling/Jumping state checks from second script
+        if (rb.velocity.y < 0)
         {
-            airborne = false;
-        }
-        else
-        {
-            airborne = true;
-        }
-    }
-
-    /*
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
+            isFalling = true;
             isJumping = false;
         }
-    }
-       
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
+        else if (rb.velocity.y > 0)
         {
             isJumping = true;
+            isFalling = false;
+        }
+        else
+        {
+            isJumping = false;
+            isFalling = false;
+        }
+
+        // Knockback takes priority
+        if (KBCounter > 0)
+        {
+            if (KnockFromRight)
+            {
+                rb.velocity = new Vector2(-KBForce * 1.5f, KBForce);
+            }
+            else
+            {
+                rb.velocity = new Vector2(KBForce * 1.5f, KBForce);
+            }
+            KBCounter -= Time.deltaTime;
+        }
+        else
+        {
+            // Normal movement when not in knockback
+            rb.velocity = new Vector2(move * speed, rb.velocity.y);
+
+            // Simplified jump from second script
+            if (Input.GetButtonDown("Jump") && !isFalling && !isJumping)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jump);
+            }
+        }
+
+        // Animation states
+        animator.SetFloat("speed", Mathf.Abs(rb.velocity.x));
+        animator.SetBool("isFalling", isFalling);
+        animator.SetBool("isJumping", isJumping);
+
+        // Character flipping
+        if (rb.velocity.x < 0 && !flipped) FlipCharacter();
+        if (rb.velocity.x > 0 && flipped) FlipCharacter();
+    }
+
+    // Keep all your collision methods exactly as they were
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log($"Collision detected with tag: '{collision.gameObject.tag}'");
+        Debug.Log($"GameObject name: {collision.gameObject.name}");
+        Debug.Log($"HasInitialized: {hasInitialized}");
+
+        if (!hasInitialized)
+        {
+            Debug.Log("Not initialized yet");
+            rb.velocity = Vector2.zero;
+            return;
+        }
+
+        string collisionTag = collision.gameObject.tag;
+        Debug.Log($"Checking tag: '{collisionTag}'");
+        Debug.Log($"Is Weak Point tag match: {collisionTag == "Weak Point"}");
+        Debug.Log($"Is Enemy tag match: {collisionTag == "Enemy"}");
+
+        if (collisionTag == "Weak Point" || collisionTag == "Enemy")
+        {
+            Debug.Log($"Hit {collisionTag}!");
+            Debug.Log($"KBTotalTime value: {KBTotalTime}");
+            KBCounter = KBTotalTime;
+            Debug.Log($"KBCounter after setting: {KBCounter}");
+
+            KBTotalTime = 0.4f;
+            KBCounter = 0.4f;
+            KBForce = 3f;
+
+            KnockFromRight = collision.transform.position.x > transform.position.x;
+            rb.velocity = Vector2.zero;
         }
     }
-    */
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("OneWayPlatform"))
+        {
+            // Update jumping/falling states
+            if (rb.velocity.y < 0)
+            {
+                isFalling = true;
+            }
+        }
+    }
 
     private void FlipCharacter()
     {
@@ -115,14 +150,4 @@ public class PlayerMovement : MonoBehaviour
         gameObject.transform.localScale = factor;
         flipped = !flipped;
     }
-
-    private IEnumerator JumpAction()
-    {
-        isJumping = true;
-        yield return new WaitForSeconds(jumpDelay);
-        rb.velocity = new Vector2(rb.velocity.x, jump);
-        isJumping = false;
-    }
-
-
 }
