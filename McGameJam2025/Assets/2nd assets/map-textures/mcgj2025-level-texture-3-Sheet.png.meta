@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -101,27 +101,6 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1920
-        width: 1920
-        height: 480
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 492931a3d07172c40ac7b3404d9a11e8
-      internalID: 1648432005
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: mcgj2025-level-texture-3-Sheet_1
-      rect:
-        serializedVersion: 2
-        x: 0
         y: 1440
         width: 1920
         height: 480
@@ -132,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a26d9266a0311b4db6130c5b183791c
-      internalID: -981359756
+      spriteID: 522c7b043d8cd5843bdee873cb1c0b03
+      internalID: -1675549351
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mcgj2025-level-texture-3-Sheet_2
+      name: mcgj2025-level-texture-3-Sheet_1
       rect:
         serializedVersion: 2
         x: 0
@@ -153,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 5f316c1997629a14a9dda18dfa237b0c
-      internalID: -1015820955
+      spriteID: e511ad4672170ff4383250aedd499ce1
+      internalID: -673017269
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mcgj2025-level-texture-3-Sheet_3
+      name: mcgj2025-level-texture-3-Sheet_2
       rect:
         serializedVersion: 2
         x: 0
@@ -174,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a2d82af0e0f40449b1b5068da93c1f0
-      internalID: -1208587760
+      spriteID: 2026e26bd8ea3564fbd2eb9ae6afcf80
+      internalID: 1642331114
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mcgj2025-level-texture-3-Sheet_4
+      name: mcgj2025-level-texture-3-Sheet_3
       rect:
         serializedVersion: 2
         x: 0
@@ -195,8 +174,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b366b14b81723f54590af9e22cf3b7c3
-      internalID: 311601044
+      spriteID: 650e2a5e4d9835d46b00bea874c7cf01
+      internalID: 1430601059
       vertices: []
       indices: 
       edges: []
@@ -212,11 +191,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      mcgj2025-level-texture-3-Sheet_0: 1648432005
-      mcgj2025-level-texture-3-Sheet_1: -981359756
-      mcgj2025-level-texture-3-Sheet_2: -1015820955
-      mcgj2025-level-texture-3-Sheet_3: -1208587760
-      mcgj2025-level-texture-3-Sheet_4: 311601044
+      mcgj2025-level-texture-3-Sheet_0: -1675549351
+      mcgj2025-level-texture-3-Sheet_1: -673017269
+      mcgj2025-level-texture-3-Sheet_2: 1642331114
+      mcgj2025-level-texture-3-Sheet_3: 1430601059
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
