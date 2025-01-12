@@ -58,6 +58,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") && rb.velocity.y == 0)
         {
             rb.velocity = new Vector2(rb.velocity.x, jump);
+            FindObjectOfType<AudioManager>().Play("jumpSFX");
         }
         if (Input.GetKeyDown(KeyCode.J)) StartCoroutine(Punch());
         if (rb.velocity.x < 0 && !flipped) FlipCharacter();
@@ -65,6 +66,8 @@ public class PlayerMovement : MonoBehaviour
            
         move = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(move * speed, rb.velocity.y);
+        if (rb.velocity.x > 1.0f)
+            FindObjectOfType<AudioManager>().Play("walkSFX");
     }
    
     private void FlipCharacter()
@@ -78,8 +81,16 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator Punch()
     {
         isPunching = true;
-        if (isJumping || isFalling) animator.SetBool("airPunch", true);
-        else animator.SetBool("groundPunch", true);
+        if (isJumping || isFalling)
+        {
+            animator.SetBool("airPunch", true);
+            FindObjectOfType<AudioManager>().Play("airPunchSFX");
+        }
+        else
+        {
+            animator.SetBool("groundPunch", true);
+            FindObjectOfType<AudioManager>().Play("punchSFX");
+        }
         yield return new WaitForSeconds(punchCooldown);
         animator.SetBool("airPunch", false);
         animator.SetBool("groundPunch", false);
